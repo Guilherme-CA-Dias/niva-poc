@@ -64,6 +64,13 @@ export function IntegrationList() {
 					(integration) => integration.key === "token-extract"
 				);
 
+				// If token-extract integration doesn't exist, silently skip setup
+				// This is an optional feature that may not be available in all workspaces
+				if (!tokenExtractIntegration) {
+					hasAttemptedConnectionRef.current = true;
+					return;
+				}
+
 				// Mark that we're attempting to create a connection
 				isCreatingConnectionRef.current = true;
 				hasAttemptedConnectionRef.current = true;
@@ -80,15 +87,19 @@ export function IntegrationList() {
 						refresh();
 					}
 				} else {
-					console.error(
-						"Failed to setup token-extract connection:",
-						result.message
-					);
+					// Only log non-critical errors (integration not found is expected in some cases)
+					if (!result.message.includes("integration not found")) {
+						console.warn(
+							"Failed to setup token-extract connection:",
+							result.message
+						);
+					}
 					// Reset the flag on error so we can retry if needed
 					hasAttemptedConnectionRef.current = false;
 				}
 			} catch (error) {
-				console.error("Failed to setup token-extract connection:", error);
+				// Only log unexpected errors
+				console.warn("Failed to setup token-extract connection:", error);
 				hasAttemptedConnectionRef.current = false;
 			} finally {
 				isCreatingConnectionRef.current = false;

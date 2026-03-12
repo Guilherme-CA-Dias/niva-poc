@@ -162,7 +162,7 @@ export function EditRecordModal({
 								</div>
 							)}
 							{schema && formData && (
-								<div className="rounded-xl bg-sky-100/60 dark:bg-sky-900/20 p-4 shadow-sm">
+								<div className="rounded-xl bg-sky-100/60 dark:bg-sky-900/20 p-4 shadow-sm [&_input]:bg-white [&_input]:dark:bg-gray-800 [&_input]:dark:text-gray-100 [&_input]:dark:border-gray-700 [&_textarea]:bg-white [&_textarea]:dark:bg-gray-800 [&_textarea]:dark:text-gray-100 [&_textarea]:dark:border-gray-700 [&_select]:bg-white [&_select]:dark:bg-gray-800 [&_select]:dark:text-gray-100 [&_select]:dark:border-gray-700">
 									<DataInput
 										schema={schema}
 										value={formData.fields || {}}

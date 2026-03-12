@@ -43,3 +43,35 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   @apply bg-background text-foreground;
 }
+
+/* Fix DataInput component dark mode styling */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  @apply bg-gray-800 text-gray-100 border-gray-700;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  @apply text-gray-400;
+}
+
+.dark label {
+  @apply text-gray-200;
+}
+
+/* Ensure inputs in dialogs have proper dark mode styling */
+.dark [role="dialog"] input:not([type="checkbox"]):not([type="radio"]),
+.dark [role="dialog"] textarea,
+.dark [role="dialog"] select {
+  @apply bg-gray-800 text-gray-100 border-gray-700;
+}
+
+.dark [role="dialog"] input::placeholder,
+.dark [role="dialog"] textarea::placeholder {
+  @apply text-gray-400;
+}
+
+.dark [role="dialog"] label {
+  @apply text-gray-200;
+}

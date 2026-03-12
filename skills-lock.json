@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "build-product-integrations": {
+      "source": "membranehq/agent-skills",
+      "sourceType": "github",
+      "computedHash": "dc07efe31ed394c67a3aa5dec52c5b25bf9d01b81458fdf4b08c1a253cf2c8c6"
+    }
+  }
+}

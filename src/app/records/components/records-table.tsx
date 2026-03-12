@@ -1,11 +1,10 @@
 import { Record } from "@/types/record"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { Download, Trash2, Loader2 } from "lucide-react"
+import { Edit, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
-import { getAuthHeaders } from "@/lib/fetch-utils"
-import { addDownload } from "@/lib/downloads"
+import { EditRecordModal } from "./edit-record-modal"
 
 interface RecordsTableProps {
   records: Record[]
@@ -107,7 +106,7 @@ export function RecordsTable({
 }: RecordsTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<Record | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "-";
@@ -118,86 +117,16 @@ export function RecordsTable({
     }
   };
 
-  const handleDownload = async (record: Record) => {
-    // Use the MongoDB id field (not ExternalId)
-    const fileId = record.id;
-    
-    if (!fileId) {
-      console.error("No file ID found for record");
-      return;
-    }
+  const handleEdit = (record: Record) => {
+    setSelectedRecord(record)
+    setIsEditDialogOpen(true)
+  }
 
-    setDownloadingFileId(fileId);
-    
-    try {
-      const response = await fetch("/api/records/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthHeaders(),
-        },
-        body: JSON.stringify({ fileId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to download file");
-      }
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      // Extract downloadUri from the response
-      const downloadUri = data.data?.downloadUri || data.data?.url;
-      
-      if (downloadUri) {
-        // Store the download in localStorage for tracking
-        addDownload({
-          fileId: fileId,
-          fileName: record.name || `File ${record.fields?.ExternalId || fileId}`,
-          downloadUri: downloadUri,
-          timestamp: new Date().toISOString(),
-          recordName: record.name,
-        });
-        
-        // Dispatch custom event to notify downloads page
-        window.dispatchEvent(new CustomEvent('download-added'));
-      }
-
-      // Handle the download response
-      // The response might contain a download URL or file data
-      if (data.data?.downloadUri) {
-        // If there's a downloadUri (S3 link), we'll track it but not auto-download
-        // User can download from the downloads page
-        console.log("Download URI received:", data.data.downloadUri);
-      } else if (data.data?.url) {
-        // If there's a URL, open it in a new tab
-        window.open(data.data.url, "_blank");
-      } else if (data.data?.fileData) {
-        // If there's file data, create a blob and download it
-        const blob = new Blob([data.data.fileData], { type: data.data.mimeType || "application/octet-stream" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = data.data.fileName || `file-${fileId}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      } else if (data.data) {
-        // If the data itself is a URL or file content, handle it
-        console.log("Download response:", data.data);
-      }
-    } catch (error) {
-      console.error("Error downloading file:", error);
-      alert(error instanceof Error ? error.message : "Failed to download file");
-    } finally {
-      setDownloadingFileId(null);
-    }
-  };
+  const handleEditComplete = () => {
+    setIsEditDialogOpen(false)
+    setSelectedRecord(null)
+    onRecordUpdated?.()
+  }
 
   const handleDelete = (record: Record) => {
     setSelectedRecord(record)
@@ -258,16 +187,11 @@ export function RecordsTable({
                 >
                   <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => handleDownload(record)}
-                      disabled={downloadingFileId === record.id}
-                      className="p-2 rounded-full hover:bg-sky-200/60 dark:hover:bg-sky-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Download file"
+                      onClick={() => handleEdit(record)}
+                      className="p-2 rounded-full hover:bg-blue-200/60 dark:hover:bg-blue-800/60 transition-colors"
+                      title="Update deal"
                     >
-                      {downloadingFileId === record.id ? (
-                        <Loader2 className="h-4 w-4 text-gray-600 dark:text-gray-400 animate-spin" />
-                      ) : (
-                        <Download className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                      )}
+                      <Edit className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     </button>
                     <button
                       onClick={() => handleDelete(record)}
@@ -365,13 +289,24 @@ export function RecordsTable({
       </ScrollArea>
 
       {selectedRecord && (
-        <DeleteConfirmationDialog
-          isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          onConfirm={handleDeleteComplete}
-          record={selectedRecord}
-          onRecordDeleted={onRecordDeleted}
-        />
+        <>
+          <EditRecordModal
+            record={selectedRecord}
+            isOpen={isEditDialogOpen}
+            onClose={() => {
+              setIsEditDialogOpen(false)
+              setSelectedRecord(null)
+            }}
+            onComplete={handleEditComplete}
+          />
+          <DeleteConfirmationDialog
+            isOpen={isDeleteDialogOpen}
+            onClose={() => setIsDeleteDialogOpen(false)}
+            onConfirm={handleDeleteComplete}
+            record={selectedRecord}
+            onRecordDeleted={onRecordDeleted}
+          />
+        </>
       )}
     </div>
   )

@@ -161,10 +161,12 @@ export async function ensureTokenExtractConnection(
 	integration: Integration | undefined
 ): Promise<CreateConnectionResult> {
 	// Check if integration exists
+	// If integration doesn't exist, return success=false but don't treat as error
+	// This is an optional feature that may not be available in all workspaces
 	if (!integration || integration.key !== "token-extract") {
 		return {
 			success: false,
-			message: "token-extract integration not found",
+			message: "token-extract integration not found (optional feature)",
 		};
 	}
 
