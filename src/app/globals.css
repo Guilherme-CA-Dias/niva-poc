@@ -16,19 +16,17 @@
     --secondary-foreground: 222.2 47.4% 11.2%;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-      --primary: 210 40% 98%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-    }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
   }
 }
 
@@ -44,34 +42,314 @@ body {
   @apply bg-background text-foreground;
 }
 
-/* Fix DataInput component dark mode styling */
-.dark input:not([type="checkbox"]):not([type="radio"]),
-.dark textarea,
-.dark select {
-  @apply bg-gray-800 text-gray-100 border-gray-700;
+.integration-app-dialog {
+  color-scheme: light;
+  --global-font-body: inherit;
+  --iap-colors-bg-canvas: hsl(var(--background));
+  --iap-colors-bg-default: hsl(var(--background));
+  --iap-colors-bg-subtle: rgb(248 250 252);
+  --iap-colors-bg-muted: rgb(241 245 249);
+  --iap-colors-bg-emphasized: rgb(226 232 240);
+  --iap-colors-bg-disabled: rgb(241 245 249);
+  --iap-colors-surface-default: rgb(255 255 255);
+  --iap-colors-touchable-hover: rgb(241 245 249);
+  --iap-colors-fg-default: hsl(var(--foreground));
+  --iap-colors-fg-muted: rgb(71 85 105);
+  --iap-colors-fg-subtle: rgb(100 116 139);
+  --iap-colors-fg-disabled: rgb(148 163 184);
+  --iap-colors-fg-error: rgb(220 38 38);
+  --iap-colors-border-default: rgb(203 213 225);
+  --iap-colors-border-muted: rgb(226 232 240);
+  --iap-colors-border-subtle: rgb(226 232 240);
+  --iap-colors-border-disabled: rgb(226 232 240);
+  --iap-colors-border-outline: rgb(59 130 246);
+  --iap-colors-border-error: rgb(248 113 113);
+  --iap-colors-accent-default: rgb(37 99 235);
+  --iap-colors-accent-emphasized: rgb(29 78 216);
+  --iap-colors-accent-fg: rgb(255 255 255);
+  --iap-colors-accent-text: rgb(29 78 216);
 }
 
-.dark input::placeholder,
-.dark textarea::placeholder {
-  @apply text-gray-400;
+/* Ensure DataInput components inherit the theme */
+.integration-app-dialog [data-integration-app],
+.integration-app-dialog [data-integration-app-input] {
+  color-scheme: inherit;
 }
 
-.dark label {
-  @apply text-gray-200;
+.dark .integration-app-dialog {
+  color-scheme: dark;
+  --iap-colors-bg-canvas: hsl(var(--background));
+  --iap-colors-bg-default: rgb(17 24 39);
+  --iap-colors-bg-subtle: rgb(31 41 55);
+  --iap-colors-bg-muted: rgb(55 65 81);
+  --iap-colors-bg-emphasized: rgb(75 85 99);
+  --iap-colors-bg-disabled: rgb(31 41 55);
+  --iap-colors-surface-default: rgb(31 41 55);
+  --iap-colors-touchable-hover: rgb(55 65 81);
+  --iap-colors-fg-default: rgb(243 244 246);
+  --iap-colors-fg-muted: rgb(209 213 219);
+  --iap-colors-fg-subtle: rgb(156 163 175);
+  --iap-colors-fg-disabled: rgb(107 114 128);
+  --iap-colors-fg-error: rgb(248 113 113);
+  --iap-colors-border-default: rgb(75 85 99);
+  --iap-colors-border-muted: rgb(55 65 81);
+  --iap-colors-border-subtle: rgb(55 65 81);
+  --iap-colors-border-disabled: rgb(55 65 81);
+  --iap-colors-border-outline: rgb(96 165 250);
+  --iap-colors-border-error: rgb(185 28 28);
+  --iap-colors-accent-default: rgb(59 130 246);
+  --iap-colors-accent-emphasized: rgb(37 99 235);
+  --iap-colors-accent-fg: rgb(239 246 255);
+  --iap-colors-accent-text: rgb(147 197 253);
 }
 
-/* Ensure inputs in dialogs have proper dark mode styling */
-.dark [role="dialog"] input:not([type="checkbox"]):not([type="radio"]),
-.dark [role="dialog"] textarea,
-.dark [role="dialog"] select {
-  @apply bg-gray-800 text-gray-100 border-gray-700;
+/* Force dark mode styling for all inputs in dark theme - comprehensive selectors */
+.dark .integration-app-dialog input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark .integration-app-dialog textarea,
+.dark .integration-app-dialog select,
+.dark .integration-app-dialog [data-integration-app] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark .integration-app-dialog [data-integration-app] textarea,
+.dark .integration-app-dialog [data-integration-app] select,
+.dark .integration-app-dialog [data-integration-app-input] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark .integration-app-dialog [data-integration-app-input] textarea,
+.dark .integration-app-dialog [data-integration-app-input] select,
+.dark .integration-app-dialog .iap-input__input,
+.dark .integration-app-dialog .iap-textarea__textarea,
+.dark .integration-app-dialog .iap-select__trigger,
+.dark .integration-app-dialog .iap-numberInput__input {
+  background-color: rgb(31 41 55) !important;
+  color: rgb(243 244 246) !important;
+  border-color: rgb(75 85 99) !important;
 }
 
-.dark [role="dialog"] input::placeholder,
-.dark [role="dialog"] textarea::placeholder {
-  @apply text-gray-400;
+.dark .integration-app-dialog input::placeholder,
+.dark .integration-app-dialog textarea::placeholder,
+.dark .integration-app-dialog [data-integration-app] input::placeholder,
+.dark .integration-app-dialog [data-integration-app] textarea::placeholder,
+.dark .integration-app-dialog [data-integration-app-input] input::placeholder,
+.dark .integration-app-dialog [data-integration-app-input] textarea::placeholder {
+  color: rgb(156 163 175) !important;
 }
 
-.dark [role="dialog"] label {
-  @apply text-gray-200;
+.integration-app-dialog[data-dropdown-portal-boundary],
+.integration-app-dialog [data-dropdown-portal-boundary] {
+  position: relative;
+  overflow: visible;
+}
+
+.integration-app-dialog :is(
+  .iap-select__trigger,
+  .iap-select__content,
+  .iap-combobox__content,
+  .iap-datePicker__content,
+  .iap-popover__content,
+  .iap-numberInput__control,
+  .iap-tagsInput__control,
+  .iap-alert__root,
+  .iap-card__root,
+  .iap-input__input,
+  .iap-textarea__textarea,
+  .iap-select__value
+) {
+  background: var(--iap-colors-surface-default);
+  border-color: var(--iap-colors-border-default);
+  color: var(--iap-colors-fg-default);
+}
+
+/* Input and textarea specific styling - force dark mode styling */
+.integration-app-dialog input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.integration-app-dialog textarea,
+.integration-app-dialog select,
+.integration-app-dialog .iap-input__input,
+.integration-app-dialog .iap-textarea__textarea,
+.integration-app-dialog .iap-select__trigger,
+.integration-app-dialog .iap-numberInput__input {
+  background-color: var(--iap-colors-surface-default) !important;
+  color: var(--iap-colors-fg-default) !important;
+  border-color: var(--iap-colors-border-default) !important;
+}
+
+.integration-app-dialog input::placeholder,
+.integration-app-dialog textarea::placeholder,
+.integration-app-dialog .iap-input__input::placeholder,
+.integration-app-dialog .iap-textarea__textarea::placeholder {
+  color: var(--iap-colors-fg-subtle) !important;
+}
+
+.integration-app-dialog input:focus,
+.integration-app-dialog textarea:focus,
+.integration-app-dialog select:focus,
+.integration-app-dialog .iap-input__input:focus,
+.integration-app-dialog .iap-textarea__textarea:focus {
+  border-color: var(--iap-colors-border-outline) !important;
+  outline-color: var(--iap-colors-border-outline) !important;
+}
+
+/* Label styling */
+.integration-app-dialog .iap-field__label,
+.integration-app-dialog label {
+  color: var(--iap-colors-fg-default);
+}
+
+/* Force dark mode label styling - comprehensive selectors */
+.dark .integration-app-dialog .iap-field__label,
+.dark .integration-app-dialog label,
+.dark .integration-app-dialog [class*="label"],
+.dark .integration-app-dialog [class*="Label"],
+.dark .integration-app-dialog .iap-field__label *,
+.dark .integration-app-dialog *[class*="iap"] label,
+.dark .integration-app-dialog *[class*="iap"] .iap-field__label,
+.dark .integration-app-dialog * label,
+.dark .integration-app-dialog *[class*="field"] label,
+.dark .integration-app-dialog *[class*="Field"] label {
+  color: rgb(243 244 246) !important;
+}
+
+/* Target any text that might be a label - including all children */
+.dark .integration-app-dialog .iap-field__label *,
+.dark .integration-app-dialog .iap-field__label span,
+.dark .integration-app-dialog .iap-field__label div,
+.dark .integration-app-dialog label span,
+.dark .integration-app-dialog label div,
+.dark .integration-app-dialog label *,
+.dark .integration-app-dialog [class*="label"] *,
+.dark .integration-app-dialog [class*="Label"] * {
+  color: rgb(243 244 246) !important;
+}
+
+/* Nuclear option - target all text elements that could be labels */
+.dark .integration-app-dialog *[class*="iap-field"] *,
+.dark .integration-app-dialog *[class*="iap-Field"] *,
+.dark .integration-app-dialog *[class*="field"] *:not(input):not(textarea):not(select):not(button),
+.dark .integration-app-dialog *[class*="Field"] *:not(input):not(textarea):not(select):not(button) {
+  color: rgb(243 244 246) !important;
+}
+
+/* Description/help text */
+.integration-app-dialog .iap-field__description {
+  color: var(--iap-colors-fg-muted);
+}
+
+/* Additional comprehensive dark mode input styling - catch all cases */
+.dark .integration-app-dialog * input[type="text"],
+.dark .integration-app-dialog * input[type="email"],
+.dark .integration-app-dialog * input[type="tel"],
+.dark .integration-app-dialog * input[type="url"],
+.dark .integration-app-dialog * input[type="number"],
+.dark .integration-app-dialog * input[type="date"],
+.dark .integration-app-dialog * input[type="time"],
+.dark .integration-app-dialog * input[type="datetime-local"],
+.dark .integration-app-dialog * textarea,
+.dark .integration-app-dialog * select,
+.dark .integration-app-dialog input,
+.dark .integration-app-dialog textarea,
+.dark .integration-app-dialog select {
+  background-color: rgb(31 41 55) !important;
+  background: rgb(31 41 55) !important;
+  color: rgb(243 244 246) !important;
+  border-color: rgb(75 85 99) !important;
+}
+
+.dark .integration-app-dialog * input[type="text"]::placeholder,
+.dark .integration-app-dialog * input[type="email"]::placeholder,
+.dark .integration-app-dialog * input[type="tel"]::placeholder,
+.dark .integration-app-dialog * textarea::placeholder,
+.dark .integration-app-dialog input::placeholder,
+.dark .integration-app-dialog textarea::placeholder {
+  color: rgb(156 163 175) !important;
+}
+
+/* Target all possible integration-app input classes */
+.dark .integration-app-dialog [class*="input"],
+.dark .integration-app-dialog [class*="Input"],
+.dark .integration-app-dialog [class*="textarea"],
+.dark .integration-app-dialog [class*="Textarea"],
+.dark .integration-app-dialog [class*="select"],
+.dark .integration-app-dialog [class*="Select"] {
+  background-color: rgb(31 41 55) !important;
+  background: rgb(31 41 55) !important;
+  color: rgb(243 244 246) !important;
+  border-color: rgb(75 85 99) !important;
+}
+
+/* Force dark styling on any element that looks like an input */
+.dark .integration-app-dialog [role="textbox"],
+.dark .integration-app-dialog [role="combobox"],
+.dark .integration-app-dialog [contenteditable="true"] {
+  background-color: rgb(31 41 55) !important;
+  color: rgb(243 244 246) !important;
+  border-color: rgb(75 85 99) !important;
+}
+
+/* Nuclear option - target absolutely everything that could be an input */
+.dark .integration-app-dialog *[class*="iap"] input,
+.dark .integration-app-dialog *[class*="iap"] textarea,
+.dark .integration-app-dialog *[class*="iap"] select {
+  background-color: rgb(31 41 55) !important;
+  background: rgb(31 41 55) !important;
+  color: rgb(243 244 246) !important;
+  border-color: rgb(75 85 99) !important;
+}
+
+/* Target ALL text elements within field containers - most aggressive approach */
+.dark .integration-app-dialog *[class*="field"] *:not(input):not(textarea):not(select):not(button):not([class*="input"]):not([class*="textarea"]):not([class*="select"]),
+.dark .integration-app-dialog *[class*="Field"] *:not(input):not(textarea):not(select):not(button):not([class*="input"]):not([class*="textarea"]):not([class*="select"]),
+.dark .integration-app-dialog *[class*="iap-field"] *:not(input):not(textarea):not(select):not(button):not([class*="input"]):not([class*="textarea"]):not([class*="select"]) {
+  color: rgb(243 244 246) !important;
+}
+
+/* Target any div or span that contains label text */
+.dark .integration-app-dialog *[class*="field"] > *:first-child,
+.dark .integration-app-dialog *[class*="Field"] > *:first-child,
+.dark .integration-app-dialog *[class*="iap-field"] > *:first-child {
+  color: rgb(243 244 246) !important;
+}
+
+/* Target CSS module classes for field titles - comprehensive approach */
+.dark .integration-app-dialog [class*="styles-module_cell"],
+.dark .integration-app-dialog [class*="styles-module_cell"] *,
+.dark .integration-app-dialog [class*="styles-module_cellName"],
+.dark .integration-app-dialog [class*="styles-module_cellName"] *,
+.dark .integration-app-dialog [class*="styles-module_title"],
+.dark .integration-app-dialog [class*="styles-module_title"] *,
+.dark .integration-app-dialog [class*="styles-module_title_title"],
+.dark .integration-app-dialog [class*="styles-module_title_title"] *,
+.dark .integration-app-dialog [class*="styles-module_title_leftSide"],
+.dark .integration-app-dialog [class*="styles-module_title_leftSide"] *,
+.dark .integration-app-dialog [class*="styles-module_title_rightSide"],
+.dark .integration-app-dialog [class*="styles-module_title_rightSide"] * {
+  color: rgb(243 244 246) !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Target the entire title section container */
+.dark .integration-app-dialog [class*="styles-module_cell"] {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Force all text within title containers to be light - including all nested elements */
+.dark .integration-app-dialog [class*="styles-module_title"] div,
+.dark .integration-app-dialog [class*="styles-module_title"] span,
+.dark .integration-app-dialog [class*="styles-module_title"] p,
+.dark .integration-app-dialog [class*="styles-module_title"] * {
+  color: rgb(243 244 246) !important;
+}
+
+/* Nuclear option - target any element that contains title text */
+.dark .integration-app-dialog [class*="styles-module"]:not([class*="input"]):not([class*="textarea"]):not([class*="select"]):not([class*="button"]) {
+  color: rgb(243 244 246) !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.integration-app-dialog :is(
+  .iap-popover__positioner,
+  .iap-popover__content,
+  .iap-select__content,
+  .iap-combobox__content,
+  .iap-datePicker__content
+) {
+  z-index: 60;
 }

@@ -57,62 +57,68 @@ export async function GET(
   request: Request,
   { params }: { params: { formId: string; userId: string } }
 ) {
-  const { formId, userId } = await Promise.resolve(params)
-  
-  await connectToDatabase()
-
-  // First, verify the form exists
-  const formDefinition = await FormDefinition.findOne({
-    customerId: userId,
-    formId: formId.toLowerCase()
-  })
-
-  if (!formDefinition) {
-    return NextResponse.json({ error: 'Form not found' }, { status: 404 })
-  }
-
-  let schema = await FieldSchema.findOne({
-    customerId: userId,
-    recordType: formId.toLowerCase()
-  })
-
-  if (!schema) {
-    // Check if there's a default schema for this form type
-    const schemaKey = formId.toLowerCase();
-    const defaultSchema = DEFAULT_SCHEMAS[schemaKey as keyof typeof DEFAULT_SCHEMAS];
+  try {
+    const { formId, userId } = await Promise.resolve(params)
     
-    if (!defaultSchema) {
-      console.warn(`No default schema found for form type: ${schemaKey}`);
-      // Create a minimal default schema
-      schema = await FieldSchema.create({
-        customerId: userId,
-        recordType: formId.toLowerCase(),
-        properties: new Map(Object.entries({
-          id: { type: 'string', title: 'ID' },
-          name: { type: 'string', title: 'Name' }
-        })),
-        required: ['id', 'name']
-      });
-    } else {
-      // Create schema with the default properties
-      schema = await FieldSchema.create({
-        customerId: userId,
-        recordType: formId.toLowerCase(),
-        properties: new Map(Object.entries(defaultSchema.properties)),
-        required: defaultSchema.required
-      });
+    await connectToDatabase()
+
+    const normalizedFormId = formId.toLowerCase()
+
+    // First, verify the form exists
+    const formDefinition = await FormDefinition.findOne({
+      customerId: userId,
+      formId: normalizedFormId
+    })
+
+    if (!formDefinition) {
+      return NextResponse.json({ error: 'Form not found' }, { status: 404 })
     }
+
+    let schema = await FieldSchema.findOne({
+      customerId: userId,
+      recordType: normalizedFormId
+    })
+
+    if (!schema) {
+      const defaultSchema = DEFAULT_SCHEMAS[normalizedFormId as keyof typeof DEFAULT_SCHEMAS]
+      
+      if (!defaultSchema) {
+        console.warn(`No default schema found for form type: ${normalizedFormId}`)
+        schema = await FieldSchema.create({
+          customerId: userId,
+          recordType: normalizedFormId,
+          properties: new Map(Object.entries({
+            id: { type: 'string', title: 'ID' },
+            name: { type: 'string', title: 'Name' }
+          })),
+          required: ['id', 'name']
+        })
+      } else {
+        schema = await FieldSchema.create({
+          customerId: userId,
+          recordType: normalizedFormId,
+          properties: new Map(Object.entries(defaultSchema.properties)),
+          required: 'required' in defaultSchema ? [...defaultSchema.required] : []
+        })
+      }
+    }
+
+    const cleanProperties = cleanSchemaProperties(schema.properties)
+
+    return NextResponse.json({
+      schema: {
+        type: "object",
+        properties: cleanProperties,
+        required: schema.required || []
+      }
+    })
+  } catch (error) {
+    console.error('Error loading schema:', error)
+    return NextResponse.json(
+      { error: 'Failed to load schema' },
+      { status: 500 }
+    )
   }
-
-  const cleanProperties = cleanSchemaProperties(schema.properties)
-
-  return NextResponse.json({
-    schema: {
-      type: "object",
-      properties: cleanProperties,
-      required: schema.required
-    }
-  })
 }
 
 export async function POST(
@@ -225,7 +231,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Form not found' }, { status: 404 })
   }
 
-  let schema = await FieldSchema.findOne({
+  const schema = await FieldSchema.findOne({
     customerId: userId,
     recordType: formId.toLowerCase()
   })

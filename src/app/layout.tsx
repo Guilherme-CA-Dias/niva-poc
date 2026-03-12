@@ -1,4 +1,5 @@
 import "./globals.css"
+import "./integration-app.css"
 import { ThemeProvider } from "@/app/providers"
 import { Header } from "@/components/header"
 import { inter } from "@/app/fonts"
