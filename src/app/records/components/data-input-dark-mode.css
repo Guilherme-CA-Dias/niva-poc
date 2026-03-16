@@ -1,0 +1,62 @@
+/* Dark mode styles for DataInput component within edit record modal */
+
+/* Input fields dark mode styling */
+.dark .integration-app-dialog input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark .integration-app-dialog textarea,
+.dark .integration-app-dialog select,
+.dark .integration-app-dialog .iap-input__input,
+.dark .integration-app-dialog .iap-textarea__textarea,
+.dark .integration-app-dialog .iap-select__trigger,
+.dark .integration-app-dialog .iap-numberInput__input {
+  background-color: rgb(31, 41, 55) !important;
+  background: rgb(31, 41, 55) !important;
+  color: rgb(243, 244, 246) !important;
+  border-color: rgb(75, 85, 99) !important;
+}
+
+.dark .integration-app-dialog input::placeholder,
+.dark .integration-app-dialog textarea::placeholder {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Field labels dark mode styling */
+.dark .integration-app-dialog .iap-field__label,
+.dark .integration-app-dialog .iap-field__label *,
+.dark .integration-app-dialog label,
+.dark .integration-app-dialog label *,
+.dark .integration-app-dialog [class*="label"],
+.dark .integration-app-dialog [class*="label"] *,
+.dark .integration-app-dialog [class*="Label"],
+.dark .integration-app-dialog [class*="Label"] *,
+.dark .integration-app-dialog [class*="field"] *:not(input):not(textarea):not(select):not(button),
+.dark .integration-app-dialog [class*="Field"] *:not(input):not(textarea):not(select):not(button) {
+  color: rgb(243, 244, 246) !important;
+}
+
+/* Field title/label dark mode styling - CSS module classes */
+.dark .data-input-wrapper [class*="styles-module_cell"],
+.dark .data-input-wrapper [class*="styles-module_cell"] *,
+.dark .data-input-wrapper [class*="styles-module_cellName"],
+.dark .data-input-wrapper [class*="styles-module_cellName"] *,
+.dark .data-input-wrapper [class*="styles-module_title"],
+.dark .data-input-wrapper [class*="styles-module_title"] *,
+.dark .data-input-wrapper [class*="styles-module_title_title"],
+.dark .data-input-wrapper [class*="styles-module_title_title"] *,
+.dark .data-input-wrapper [class*="styles-module_title_leftSide"],
+.dark .data-input-wrapper [class*="styles-module_title_leftSide"] *,
+.dark .data-input-wrapper [class*="styles-module_title_rightSide"],
+.dark .data-input-wrapper [class*="styles-module_title_rightSide"] * {
+  color: rgb(243, 244, 246) !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.dark .data-input-wrapper [class*="styles-module_title"] div,
+.dark .data-input-wrapper [class*="styles-module_title"] span {
+  color: rgb(243, 244, 246) !important;
+}
+
+/* General text elements within data-input-wrapper */
+.dark .data-input-wrapper *:not(input):not(textarea):not(select):not(button):not([class*="input"]):not([class*="textarea"]):not([class*="select"]) {
+  color: rgb(243, 244, 246) !important;
+}

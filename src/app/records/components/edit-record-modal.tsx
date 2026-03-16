@@ -14,6 +14,7 @@ import { DataInput, DropdownPortalBoundary } from "@integration-app/react";
 import { sendToWebhook } from "@/lib/webhook-utils";
 import { ensureAuth } from "@/lib/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import "./data-input-dark-mode.css";
 
 interface EditRecordModalProps {
 	record: Record;
@@ -141,70 +142,13 @@ export function EditRecordModal({
 										</div>
 									)}
 									{schema && formData && (
-										<>
-											<style dangerouslySetInnerHTML={{__html: `
-												.dark .integration-app-dialog input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
-												.dark .integration-app-dialog textarea,
-												.dark .integration-app-dialog select,
-												.dark .integration-app-dialog .iap-input__input,
-												.dark .integration-app-dialog .iap-textarea__textarea,
-												.dark .integration-app-dialog .iap-select__trigger,
-												.dark .integration-app-dialog .iap-numberInput__input {
-													background-color: rgb(31, 41, 55) !important;
-													background: rgb(31, 41, 55) !important;
-													color: rgb(243, 244, 246) !important;
-													border-color: rgb(75, 85, 99) !important;
-												}
-												.dark .integration-app-dialog input::placeholder,
-												.dark .integration-app-dialog textarea::placeholder {
-													color: rgb(156, 163, 175) !important;
-												}
-												.dark .integration-app-dialog .iap-field__label,
-												.dark .integration-app-dialog .iap-field__label *,
-												.dark .integration-app-dialog label,
-												.dark .integration-app-dialog label *,
-												.dark .integration-app-dialog [class*="label"],
-												.dark .integration-app-dialog [class*="label"] *,
-												.dark .integration-app-dialog [class*="Label"],
-												.dark .integration-app-dialog [class*="Label"] *,
-												.dark .integration-app-dialog [class*="field"] *:not(input):not(textarea):not(select):not(button),
-												.dark .integration-app-dialog [class*="Field"] *:not(input):not(textarea):not(select):not(button) {
-													color: rgb(243, 244, 246) !important;
-												}
-											`}} />
-											<div className="data-input-wrapper rounded-xl border border-slate-200/80 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90">
-												<style dangerouslySetInnerHTML={{__html: `
-													.dark .data-input-wrapper *:not(input):not(textarea):not(select):not(button):not([class*="input"]):not([class*="textarea"]):not([class*="select"]) {
-														color: rgb(243, 244, 246) !important;
-													}
-													.dark .data-input-wrapper [class*="styles-module_cell"],
-													.dark .data-input-wrapper [class*="styles-module_cell"] *,
-													.dark .data-input-wrapper [class*="styles-module_cellName"],
-													.dark .data-input-wrapper [class*="styles-module_cellName"] *,
-													.dark .data-input-wrapper [class*="styles-module_title"],
-													.dark .data-input-wrapper [class*="styles-module_title"] *,
-													.dark .data-input-wrapper [class*="styles-module_title_title"],
-													.dark .data-input-wrapper [class*="styles-module_title_title"] *,
-													.dark .data-input-wrapper [class*="styles-module_title_leftSide"],
-													.dark .data-input-wrapper [class*="styles-module_title_leftSide"] *,
-													.dark .data-input-wrapper [class*="styles-module_title_rightSide"],
-													.dark .data-input-wrapper [class*="styles-module_title_rightSide"] * {
-														color: rgb(243, 244, 246) !important;
-														background-color: transparent !important;
-														background: transparent !important;
-													}
-													.dark .data-input-wrapper [class*="styles-module_title"] div,
-													.dark .data-input-wrapper [class*="styles-module_title"] span {
-														color: rgb(243, 244, 246) !important;
-													}
-												`}} />
-												<DataInput
-													schema={schema}
-													value={formData.fields || {}}
-													onChange={handleFieldChange}
-												/>
-											</div>
-										</>
+										<div className="data-input-wrapper rounded-xl border border-slate-200/80 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90">
+											<DataInput
+												schema={schema}
+												value={formData.fields || {}}
+												onChange={handleFieldChange}
+											/>
+										</div>
 									)}
 								</div>
 							</ScrollArea>
