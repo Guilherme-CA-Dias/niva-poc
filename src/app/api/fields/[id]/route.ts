@@ -2,18 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthFromRequest } from '@/lib/server-auth';
 import { connectToDatabase } from '@/lib/mongodb';
 import { AppFieldSchema, fieldDefinitionToSchemaField } from '@/models/app-field';
-import { DEFAULT_SUBMISSION_FIELDS, DEFAULT_DEAL_FIELDS } from '@/lib/default-fields';
+import { DEFAULT_SUBMISSION_FIELDS, DEFAULT_DEAL_FIELDS, DEFAULT_DOCUMENT_FIELDS } from '@/lib/default-fields';
 import type { JSONSchemaProperty } from '@/types/contact-schema';
 
 // Helper to separate default and custom fields
 function separateFields(
   properties: Map<string, any>,
-  fieldType: 'submissions' | 'deals'
+  fieldType: 'submissions' | 'deals' | 'files'
 ): { defaultFields: Record<string, JSONSchemaProperty>; customFields: Record<string, JSONSchemaProperty> } {
   const defaultFields: Record<string, JSONSchemaProperty> = {};
   const customFields: Record<string, JSONSchemaProperty> = {};
   
-  const defaultFieldList = fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS : DEFAULT_DEAL_FIELDS;
+  const defaultFieldList = 
+    fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS :
+    fieldType === 'deals' ? DEFAULT_DEAL_FIELDS :
+    DEFAULT_DOCUMENT_FIELDS;
   const defaultFieldKeys = new Set(defaultFieldList.map(f => f.key));
   
   properties.forEach((value: any, key: string) => {
@@ -61,10 +64,10 @@ export async function DELETE(
     }
 
     const { searchParams } = new URL(request.url);
-    const fieldType = searchParams.get('fieldType') as 'submissions' | 'deals' | null;
+    const fieldType = searchParams.get('fieldType') as 'submissions' | 'deals' | 'files' | null;
     const fieldKey = params.id; // The "id" is actually the field key
 
-    if (!fieldType || (fieldType !== 'submissions' && fieldType !== 'deals')) {
+    if (!fieldType || (fieldType !== 'submissions' && fieldType !== 'deals' && fieldType !== 'files')) {
       return NextResponse.json(
         { error: 'Invalid or missing fieldType' },
         { status: 400 }

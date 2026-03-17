@@ -16,7 +16,7 @@ export interface FieldDefinition {
 // MongoDB schema using Membrane-compatible format
 export interface IAppFieldSchema {
   customerId: string;
-  fieldType: 'submissions' | 'deals';
+  fieldType: 'submissions' | 'deals' | 'files';
   properties: Map<string, SchemaField>; // Membrane-compatible format
   required: string[]; // Array of field keys that are required
 }
@@ -53,7 +53,7 @@ const appFieldSchema = new mongoose.Schema<IAppFieldSchema>(
     fieldType: {
       type: String,
       required: true,
-      enum: ['submissions', 'deals'],
+      enum: ['submissions', 'deals', 'files'],
     },
     properties: {
       type: Map,

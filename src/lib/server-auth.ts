@@ -12,27 +12,33 @@ export function getAuthFromRequest(request: NextRequest): AuthCustomer {
     let customerName = customerNameHeader;
 
     if (authIdHeader) {
-        try {
-            // Decode JWT without verification (since we just need the payload)
-            const decoded = decodeJwt(authIdHeader);
-            
-            // Extract customer ID from JWT payload
-            // The payload can have 'id' or 'customerId' field
-            if (decoded.id) {
-                customerId = decoded.id as string;
-            } else if (decoded.customerId) {
-                customerId = decoded.customerId as string;
-            }
+        // Check if it looks like a JWT (has three parts separated by dots)
+        const isJWT = authIdHeader.split('.').length === 3;
+        
+        if (isJWT) {
+            try {
+                // Decode JWT without verification (since we just need the payload)
+                const decoded = decodeJwt(authIdHeader);
+                
+                // Extract customer ID from JWT payload
+                // The payload can have 'id' or 'customerId' field
+                if (decoded.id) {
+                    customerId = decoded.id as string;
+                } else if (decoded.customerId) {
+                    customerId = decoded.customerId as string;
+                }
 
-            // Extract customer name from JWT payload if available
-            if (decoded.name && !customerName) {
-                customerName = decoded.name as string;
+                // Extract customer name from JWT payload if available
+                if (decoded.name && !customerName) {
+                    customerName = decoded.name as string;
+                }
+            } catch (error) {
+                // If decoding fails, assume it's already a plain customer ID
+                // Keep the original value
+                console.warn('Failed to decode JWT token, using as-is:', error);
             }
-        } catch (error) {
-            // If decoding fails, assume it's already a plain customer ID
-            // Keep the original value
-            console.warn('Failed to decode JWT token, using as-is:', error);
         }
+        // If it doesn't look like a JWT, use the value as-is (plain customer ID)
     }
 
     return {

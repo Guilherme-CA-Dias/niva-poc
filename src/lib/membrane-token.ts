@@ -2,9 +2,10 @@ import jwt, { Algorithm } from 'jsonwebtoken';
 import type { AuthCustomer } from './auth';
 
 // Membrane workspace credentials
-const WORKSPACE_KEY = process.env.MEMBRANE_WORKSPACE_KEY;
-const WORKSPACE_SECRET = process.env.MEMBRANE_WORKSPACE_SECRET;
-const CLIENT_KEY = process.env.MEMBRANE_CLIENT_KEY || 'niva-membrane-poc-app';
+// Fallback to INTEGRATION_APP_* if MEMBRANE_* are not set (they're the same platform)
+const WORKSPACE_KEY = process.env.INTEGRATION_APP_WORKSPACE_KEY;
+const WORKSPACE_SECRET = process.env.INTEGRATION_APP_WORKSPACE_SECRET;
+const CLIENT_KEY = 'niva-membrane-poc-app';
 
 export class MembraneTokenError extends Error {
   constructor(message: string) {
