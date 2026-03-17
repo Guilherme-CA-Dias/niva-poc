@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import { FormDefinition, DEFAULT_FORMS } from "@/models/form";
+import { FormDefinition } from "@/models/form";
 import { getIntegrationClient } from "@/lib/integration-app-client";
-import { getStoredAuth, type AuthCustomer } from "@/lib/auth";
+import type { AuthCustomer } from "@/lib/auth";
 import { RECORD_ACTIONS } from "@/lib/constants";
 
 export async function GET(request: Request) {

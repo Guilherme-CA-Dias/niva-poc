@@ -77,6 +77,17 @@ export function Header() {
 							>
 								Fields
 							</Link>
+							<Link
+								href="/files"
+								className={cn(
+									"inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors",
+									pathname === "/files"
+										? "border-blue-500 text-blue-600 dark:text-blue-400"
+										: "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+								)}
+							>
+								Files
+							</Link>
 						</div>
 					</div>
 					<div className="flex items-center">

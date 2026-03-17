@@ -9,7 +9,6 @@ import { Select } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Trash2, Loader2 } from "lucide-react"
 import { AddFieldButton } from "./add-field-button"
-import type { JSONSchema } from "@/types/contact-schema"
 
 interface DynamicFormProps {
   recordType: string

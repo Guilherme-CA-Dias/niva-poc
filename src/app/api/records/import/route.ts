@@ -60,13 +60,32 @@ export async function GET(request: NextRequest) {
 				}));
 
 				await Promise.all(
-					recordsToSave.map((record: any) =>
-						Record.updateOne(
-							{ id: record.fields.ExternalId, customerId: auth.customerId },
-							record,
+					recordsToSave.map((record: any) => {
+						// Some connectors return the canonical id at `record.id`, others may expose an ExternalId field.
+						// We must never assume `fields.ExternalId` exists, otherwise import can 500 (notably for deals).
+						const stableId =
+							record?.id ??
+							record?.fields?.ExternalId ??
+							record?.fields?.externalId;
+
+						if (!stableId) {
+							// Skip records we cannot uniquely identify (avoid crashing the whole import).
+							console.warn("Skipping record without stable id", {
+								actionKey,
+								record: {
+									id: record?.id,
+									fieldsKeys: record?.fields ? Object.keys(record.fields) : null,
+								},
+							});
+							return Promise.resolve();
+						}
+
+						return Record.updateOne(
+							{ id: stableId, customerId: auth.customerId },
+							{ ...record, id: stableId },
 							{ upsert: true }
-						)
-					)
+						);
+					})
 				);
 
 				console.log(`Saved ${records.length} records to MongoDB`);

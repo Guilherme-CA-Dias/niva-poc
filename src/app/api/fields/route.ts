@@ -1,29 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthFromRequest } from '@/lib/server-auth';
 import { connectToDatabase } from '@/lib/mongodb';
-import { AppFieldSchema, fieldDefinitionToSchemaField, schemaFieldToFieldDefinition } from '@/models/app-field';
-import { DEFAULT_SUBMISSION_FIELDS, DEFAULT_DEAL_FIELDS } from '@/lib/default-fields';
-import type { FieldDefinition } from '@/models/app-field';
+import { AppFieldSchema, fieldDefinitionToSchemaField } from '@/models/app-field';
+import { DEFAULT_SUBMISSION_FIELDS, DEFAULT_DEAL_FIELDS, DEFAULT_DOCUMENT_FIELDS } from '@/lib/default-fields';
 import type { JSONSchemaProperty } from '@/types/contact-schema';
-
-// Helper to convert Map to plain object for JSON response
-function mapToObject<T>(map: Map<string, T>): Record<string, T> {
-  const obj: Record<string, T> = {};
-  map.forEach((value, key) => {
-    obj[key] = value;
-  });
-  return obj;
-}
 
 // Helper to separate default and custom fields
 function separateFields(
   properties: Map<string, any>,
-  fieldType: 'submissions' | 'deals'
+  fieldType: 'submissions' | 'deals' | 'files'
 ): { defaultFields: Record<string, JSONSchemaProperty>; customFields: Record<string, JSONSchemaProperty> } {
   const defaultFields: Record<string, JSONSchemaProperty> = {};
   const customFields: Record<string, JSONSchemaProperty> = {};
   
-  const defaultFieldList = fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS : DEFAULT_DEAL_FIELDS;
+  const defaultFieldList = 
+    fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS :
+    fieldType === 'deals' ? DEFAULT_DEAL_FIELDS :
+    DEFAULT_DOCUMENT_FIELDS;
   const defaultFieldKeys = new Set(defaultFieldList.map(f => f.key));
   
   properties.forEach((value: any, key: string) => {
@@ -60,11 +53,11 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const fieldType = searchParams.get('fieldType') as 'submissions' | 'deals' | null;
+    const fieldType = searchParams.get('fieldType') as 'submissions' | 'deals' | 'files' | null;
 
-    if (!fieldType || (fieldType !== 'submissions' && fieldType !== 'deals')) {
+    if (!fieldType || (fieldType !== 'submissions' && fieldType !== 'deals' && fieldType !== 'files')) {
       return NextResponse.json(
-        { error: 'Invalid or missing fieldType. Must be "submissions" or "deals"' },
+        { error: 'Invalid or missing fieldType. Must be "submissions", "deals", or "files"' },
         { status: 400 }
       );
     }
@@ -93,7 +86,10 @@ export async function GET(request: NextRequest) {
     
     if (schema.properties && schema.properties instanceof Map) {
       // Get default field keys for the field type
-      const defaultFields = fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS : DEFAULT_DEAL_FIELDS;
+      const defaultFields = 
+        fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS :
+        fieldType === 'deals' ? DEFAULT_DEAL_FIELDS :
+        DEFAULT_DOCUMENT_FIELDS;
       const defaultFieldKeys = new Set(defaultFields.map(f => f.key));
       
       schema.properties.forEach((value: any, key: string) => {
@@ -152,11 +148,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { initializeDefaults, fieldType, key, label, type, required, description, isCustom, enum: enumValues, default: defaultValue } = body;
+    const { initializeDefaults, fieldType, key, label, type, required, description, enum: enumValues, default: defaultValue } = body;
 
-    if (!fieldType || (fieldType !== 'submissions' && fieldType !== 'deals')) {
+    if (!fieldType || (fieldType !== 'submissions' && fieldType !== 'deals' && fieldType !== 'files')) {
       return NextResponse.json(
-        { error: 'Invalid fieldType. Must be "submissions" or "deals"' },
+        { error: 'Invalid fieldType. Must be "submissions", "deals", or "files"' },
         { status: 400 }
       );
     }
@@ -166,7 +162,9 @@ export async function POST(request: NextRequest) {
     // If initializeDefaults is true, create/update schema with default fields
     if (initializeDefaults) {
       const defaultFieldsList =
-        fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS : DEFAULT_DEAL_FIELDS;
+        fieldType === 'submissions' ? DEFAULT_SUBMISSION_FIELDS :
+        fieldType === 'deals' ? DEFAULT_DEAL_FIELDS :
+        DEFAULT_DOCUMENT_FIELDS;
 
       // Convert to Membrane format
       const properties = new Map<string, any>();
@@ -236,6 +234,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Mongoose Map keys cannot contain "." (dot). We normalize to a safe key.
+    // This is especially important for document schemas where callers may want to express nesting.
+    const normalizedKey = String(key).replace(/\./g, '__');
+
     // Get or create the schema
     let schema = await AppFieldSchema.findOne({
       customerId: auth.customerId,
@@ -258,7 +260,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if field with same key already exists
-    if (schema.properties.has(key)) {
+    if (schema.properties.has(normalizedKey)) {
       return NextResponse.json(
         { error: 'Field with this key already exists' },
         { status: 400 }
@@ -267,7 +269,7 @@ export async function POST(request: NextRequest) {
 
     // Convert to Membrane format and add the field
     const schemaField = fieldDefinitionToSchemaField({
-      key,
+      key: normalizedKey,
       label,
       type,
       required: required || false,
@@ -277,11 +279,11 @@ export async function POST(request: NextRequest) {
       default: defaultValue,
     });
 
-    schema.properties.set(key, schemaField);
+    schema.properties.set(normalizedKey, schemaField);
 
     // Add to required array if needed
-    if (required && !schema.required.includes(key)) {
-      schema.required.push(key);
+    if (required && !schema.required.includes(normalizedKey)) {
+      schema.required.push(normalizedKey);
     }
 
     await schema.save();
@@ -307,6 +309,7 @@ export async function POST(request: NextRequest) {
         type: 'object',
         properties: responseProperties,
         required: schema.required || [],
+        normalizedKey: normalizedKey !== key ? normalizedKey : undefined,
       },
       { status: 201 }
     );

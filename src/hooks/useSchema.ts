@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { useAuth } from '@/app/auth-provider'
-import { JSONSchema } from '@/types/contact-schema'
+import type { SchemaResponse } from '@/types/contact-schema'
 
 export function useSchema(formId: string) {
   const { customerId } = useAuth()
@@ -11,9 +11,9 @@ export function useSchema(formId: string) {
   // Only fetch if we have both a formId and customerId
   const shouldFetch = cleanFormId && customerId
   
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR<SchemaResponse>(
     shouldFetch ? `/api/schema/${cleanFormId}/${customerId}` : null,
-    async (url) => {
+    async (url: string) => {
       const response = await fetch(url)
       if (!response.ok) {
         throw new Error('Failed to fetch schema')
@@ -25,6 +25,7 @@ export function useSchema(formId: string) {
   return {
     schema: data?.schema,
     isLoading,
-    error
+    error,
+    mutate
   }
 } 
