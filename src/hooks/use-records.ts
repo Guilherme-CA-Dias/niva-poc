@@ -2,10 +2,9 @@ import useSWR from 'swr';
 import { RecordsResponse } from '@/types/record';
 import { authenticatedFetcher } from '@/lib/fetch-utils';
 import { useState, useCallback, useEffect } from 'react';
-import { RECORD_ACTIONS } from '@/lib/constants';
 
 export function useRecords(actionKey: string | null, search: string = '') {
-  const [allRecords, setAllRecords] = useState([]);
+  const [allRecords, setAllRecords] = useState<RecordsResponse["records"]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   
@@ -38,7 +37,7 @@ export function useRecords(actionKey: string | null, search: string = '') {
     try {
       const endpoint = `/api/records?action=${actionKey}&cursor=${data.cursor}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
       
-      const nextPage = await authenticatedFetcher(endpoint);
+      const nextPage = await authenticatedFetcher<RecordsResponse>(endpoint);
       setAllRecords(prev => [...prev, ...nextPage.records]);
       await mutate({ ...nextPage, records: [...allRecords, ...nextPage.records] }, false);
     } catch (error) {
@@ -55,7 +54,7 @@ export function useRecords(actionKey: string | null, search: string = '') {
     try {
       const endpoint = `/api/records/import?action=${actionKey}`;
       
-      const response = await authenticatedFetcher(endpoint);
+      const response = await authenticatedFetcher<{ error?: string }>(endpoint);
 
       if (response.error) {
         throw new Error(response.error);

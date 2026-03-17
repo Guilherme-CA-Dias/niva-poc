@@ -32,7 +32,6 @@ export default function RecordsPage() {
 		isError,
 		hasMore,
 		loadMore,
-		isLoadingMore,
 		importRecords,
 		isImporting,
 		mutate,

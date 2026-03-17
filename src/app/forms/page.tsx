@@ -10,7 +10,6 @@ import { Plus, Database, GitBranch, Loader2 } from "lucide-react"
 import { DynamicForm } from "./components/dynamic-form"
 import { useIntegrationApp, useIntegrations } from "@integration-app/react"
 import { useAuth } from '@/app/auth-provider'
-import { toast } from "@/components/ui/use-toast"
 
 interface FormDefinition {
   _id: string
@@ -20,11 +19,6 @@ interface FormDefinition {
   integrationKey?: string
   createdAt: string
   updatedAt: string
-}
-
-interface Connection {
-  key: string
-  name: string
 }
 
 export default function FormsPage() {
@@ -149,6 +143,8 @@ export default function FormsPage() {
       return
     }
 
+    const integrationKey = form.integrationKey
+
     try {
       setConfiguring('dataSource')
       
@@ -172,14 +168,14 @@ export default function FormsPage() {
         .openConfiguration()
       
       // After configuring data source, create a flow instance for receiving events
-      if (form.type === 'custom') {
-        const flowPull = integrationApp
-          .connection(form.integrationKey)
+      if (form.type === 'custom' && integrationKey) {
+        await integrationApp
+          .connection(integrationKey)
           .flow('receive-objects-events', instanceConfig)
           .get({ autoCreate: true })
 
-        const flowPush = integrationApp
-          .connection(form.integrationKey)
+        await integrationApp
+          .connection(integrationKey)
           .flow('send-object-events', instanceConfig)
           .get({ autoCreate: true })
       }
@@ -204,6 +200,8 @@ export default function FormsPage() {
       return
     }
 
+    const integrationKey = form.integrationKey
+
     try {
       setConfiguring('fieldMapping')
       const dataSourceName = form.type === 'custom' ? 'objects' : selectedAction.replace('get-', '')
@@ -219,12 +217,12 @@ export default function FormsPage() {
       }
 
       await integrationApp
-        .connection(form.type === 'custom' ? form.integrationKey! : firstConnection.id)
+        .connection(form.type === 'custom' && integrationKey ? integrationKey : firstConnection.id)
         .fieldMapping(dataSourceName, instanceConfig)
         .setup()
 
       await integrationApp
-        .connection(form.type === 'custom' ? form.integrationKey! : firstConnection.id)
+        .connection(form.type === 'custom' && integrationKey ? integrationKey : firstConnection.id)
         .fieldMapping(dataSourceName, instanceConfig)
         .openConfiguration()
     } finally {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Upload, Loader2, FileText, Save, Search, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Upload, Loader2, FileText, Search, X } from "lucide-react";
 import { useAuth, getAuthHeaders } from "@/app/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import useSWR from "swr";
 import { useMembrane } from "@/app/membrane-provider";
-import { getFieldsForDocumentType, getDocumentTypeOptions, DOCUMENT_TYPES } from "@/lib/document-types";
+import { getFieldsForDocumentType, getDocumentTypeOptions } from "@/lib/document-types";
 import type { Record as RecordType } from "@/types/record";
 
 interface Document {
@@ -43,7 +43,7 @@ export default function FilesPage() {
   const [showRecordSelector, setShowRecordSelector] = useState<boolean>(false);
 
   // Fetch document fields schema
-  const { data: schemaData, error: schemaError, isLoading, mutate: mutateFields } = useSWR<{
+  const { mutate: mutateFields } = useSWR<{
     type: string;
     properties: Record<string, any>;
     required: string[];
@@ -101,7 +101,9 @@ export default function FilesPage() {
         if (field.key === 'document_type') continue;
 
         // Create a field key that includes the document type
-        const fieldKey = `documents.${documentType}.${field.key}`;
+        // NOTE: backend stores schema.properties in a Mongo/Mongoose Map, which cannot contain "." in keys.
+        // We still *represent* nesting via "__" separators.
+        const fieldKey = `documents__${documentType}__${field.key}`;
 
         const response = await fetch("/api/fields", {
           method: "POST",

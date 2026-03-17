@@ -1,9 +1,9 @@
-import type { IAppField } from '@/models/app-field';
+import type { FieldDefinition } from '@/models/app-field';
 
 /**
  * Default fields based on Niva's Submission payload
  */
-export const DEFAULT_SUBMISSION_FIELDS: Omit<IAppField, 'customerId' | '_id' | 'createdAt' | 'updatedAt'>[] = [
+export const DEFAULT_SUBMISSION_FIELDS: FieldDefinition[] = [
   {
     key: 'submission_id',
     label: 'Submission ID',
@@ -157,7 +157,7 @@ export const DEFAULT_SUBMISSION_FIELDS: Omit<IAppField, 'customerId' | '_id' | '
 /**
  * Default fields based on HubSpot Deal creation payload
  */
-export const DEFAULT_DEAL_FIELDS: Omit<IAppField, 'customerId' | '_id' | 'createdAt' | 'updatedAt'>[] = [
+export const DEFAULT_DEAL_FIELDS: FieldDefinition[] = [
   {
     key: 'email',
     label: 'Email',
@@ -269,7 +269,7 @@ export const DEFAULT_CRM_FIELD_MAPPINGS: Record<string, string> = {
  * Default document fields for files page
  * Documents is an array of objects with dynamic keys and document_type-specific fields
  */
-export const DEFAULT_DOCUMENT_FIELDS: Omit<IAppField, 'customerId' | '_id' | 'createdAt' | 'updatedAt'>[] = [
+export const DEFAULT_DOCUMENT_FIELDS: FieldDefinition[] = [
   {
     key: 'documents',
     label: 'Documents',

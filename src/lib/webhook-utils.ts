@@ -1,7 +1,6 @@
-import { RECORD_ACTIONS } from "@/lib/constants";
-
 interface WebhookPayloadData {
 	id: string;
+	recordType?: string;
 	name?: string;
 	websiteUrl?: string;
 	phones?: Array<{
@@ -55,7 +54,7 @@ const WEBHOOK_URLS = {
 		"https://api.integration.app/webhooks/app-events/cd9f4430-8f4e-45a4-badd-9d4666078540",
 };
 
-export async function sendToWebhook(payload: any) {
+export async function sendToWebhook(payload: WebhookPayload) {
 	try {
 		// Get the record type from the payload
 		const recordType = payload.data?.recordType || "";

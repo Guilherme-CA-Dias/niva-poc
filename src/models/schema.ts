@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import { JSONSchemaProperty } from '@/types/contact-schema'
 
 const schemaPropertySchema = new mongoose.Schema({
   type: String,

@@ -108,7 +108,7 @@ export function computeFields(
  */
 export async function prepareFilesForCRM(
   fileUrls: string[],
-  auth: AuthCustomer
+  _auth: AuthCustomer
 ): Promise<Array<{ name: string; content: Buffer; contentType?: string }>> {
   const files: Array<{ name: string; content: Buffer; contentType?: string }> = [];
 
